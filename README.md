@@ -194,6 +194,19 @@ You should see output like the following.
   - cd air_iri/submodules/oftest
   - sudo ./oft pktact.PacketOnly --verbose
 
+Target Directories
+========
+
+The original deployment of AIR/IRI used the Makefile to select
+the YAML input files which defined the switch being built. This
+results is a different make file target for each switch and
+results in target specifc files to collide.
+
+TODO: As a result, a new directory, targets, is being added which has
+a different subdirectory for each switch being described. Files
+generated specific to that target are placed in the appropriate 
+subdirectory.
+
 
 Roadmap
 ========

@@ -15,6 +15,9 @@ ifndef COV_SECONDS
 COV_SECONDS=5
 endif
 
+THRIFT_INPUT_DIR=thrift
+THRIFT_FILE_NAME=${THRIFT_INPUT_DIR}/table_intf.thrift
+
 # Accumulate unit test execution here
 test:
 	make -C air test
@@ -50,6 +53,16 @@ start-l3: submodule
 start-vxlan: submodule
 	sudo ${PYPATH} ./start.py -v profile_1.yml vxlan/*.yml
 
+# Currently phony, but should depend on input files.
+thrift:
+	@echo "Installing thrift interfaces for ${START_YML}"
+	./create_thrift_input.py ${START_YML} -o ${THRIFT_INPUT_DIR}
+
+runtime: thrift
+	@echo "Running thrift"
+	mkdir -p thrift-output
+	thrift -r --gen py --out thrift-output ${THRIFT_FILE_NAME}
+
 # Run some comprehensive test case and show the coverage
 cov:
 	sudo ${PYPATH} coverage run ./start.py --run_for=${COV_SECONDS} -v ${START_YML}
@@ -70,6 +83,6 @@ help:
 	@echo "  cov:       Run coverage"
 
 
-.PHONY: doc submodule clean cov doc test start start-l3 help
+.PHONY: doc submodule clean cov doc test start start-l3 help thrift
 
 
